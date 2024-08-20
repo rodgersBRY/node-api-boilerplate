@@ -19,16 +19,16 @@ app
 
 const port = process.env.PORT || 4000;
 
-app.use("/", (req, res) => {
-  res.send("This is the Halisi Travels Official API");
-});
-
 const routes = [
   { path: "/api/v1/auth", handler: authRoutes },
   { path: "/api/v1/jobs", handler: jobRoutes },
 ];
 
 routes.forEach((route) => app.use(route.path, route.handler));
+
+app.use("/", (req, res) => {
+  res.send("This is the Halisi Travels Official API");
+});
 
 app.use((err, req, res, next) => {
   const message = err.message,
