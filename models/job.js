@@ -18,7 +18,8 @@ const jobSchema = new Schema(
   {
     postedBy: {
       type: Schema.Types.ObjectId,
-      ref: "User"
+      ref: "User",
+      required: true,
     },
     title: {
       type: String,

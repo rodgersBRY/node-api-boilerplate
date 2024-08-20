@@ -74,7 +74,7 @@ exports.newJob = async (req, res, next) => {
     const requirementsList = requirements.split(",").map(item => item.trim());
 
     const jobData = {
-      // postedBy: req.userId,
+      postedBy: req.userId,
       title: title,
       location: location,
       type: type,
