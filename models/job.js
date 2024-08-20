@@ -14,6 +14,10 @@ const jobSchema = new Schema(
       type: String,
       required: true,
     },
+    category: {
+      type: String,
+      required: false,
+    },
     client: {
       type: String,
       required: true,

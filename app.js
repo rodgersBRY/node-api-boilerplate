@@ -19,6 +19,10 @@ app
 
 const port = process.env.PORT || 4000;
 
+app.use("/", (req, res) => {
+  res.send("This is the Halisi Travels Official API");
+});
+
 const routes = [
   { path: "/api/v1/auth", handler: authRoutes },
   { path: "/api/v1/jobs", handler: jobRoutes },
@@ -38,4 +42,4 @@ app.listen(port, () => {
   console.log(`Port ${port} is ready for requests`);
 });
 
-module.exports = app
+module.exports = app;
