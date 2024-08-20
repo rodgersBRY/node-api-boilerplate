@@ -5,9 +5,13 @@ const {
   deleteJobById,
 } = require("../models/job");
 
+const { throwError } = require("../helpers");
+
 exports.getJobs = async (req, res, next) => {
   try {
     const jobs = await getAllJobs();
+
+    if (!jobs) throwError("Cannot retrieve any jobs!", 404);
 
     res.status(200).json({ jobs });
   } catch (err) {
@@ -19,9 +23,9 @@ exports.getJob = async (req, res, next) => {
   try {
     const jobId = req.params.id;
 
-    console.log(jobId);
-
     const job = await getJobById(jobId);
+
+    if (!job) throwError("Cannot retrieve job details!", 404);
 
     res.status(200).json(job);
   } catch (err) {
@@ -36,24 +40,41 @@ exports.newJob = async (req, res, next) => {
       location,
       country,
       type,
+      desc,
+      tags,
       remote,
       applicationEmail,
       companyName,
       website,
-      companyEmail,
       requirements,
       roles,
     } = req.body;
 
     console.log(req.body);
 
+    if (
+      title == "" ||
+      country == "" ||
+      type == "" ||
+      applicationEmail == "" ||
+      companyName == "" ||
+      requirements == "" ||
+      desc == ""
+    )
+      throwError("Required fields cannot be empty!", 404);
+
     const clientData = {
       name: companyName,
       website: website,
-      companyEmail: companyEmail,
     };
 
+    // separate the list values
+    const tagsList = tags.split(",").map(item => item.trim());
+    const rolesList = roles.split(",").map(item => item.trim());
+    const requirementsList = requirements.split(",").map(item => item.trim());
+
     const jobData = {
+      // postedBy: req.userId,
       title: title,
       location: location,
       type: type,
@@ -61,14 +82,15 @@ exports.newJob = async (req, res, next) => {
       applicationEmail: applicationEmail,
       country: country,
       remote: remote,
-      datePosted: new Date(),
-      requirements: requirements,
-      roles: roles,
+      requirements: requirementsList,
+      roles: rolesList,
+      tags: tagsList,
+      desc: desc,
     };
 
-    const savedJob = await createJob(jobData);
+    const result = await createJob(jobData);
 
-    res.status(201).json({ result: savedJob });
+    res.status(201).json({ result });
   } catch (err) {
     next(err);
   }

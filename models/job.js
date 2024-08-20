@@ -10,17 +10,21 @@ const companySchema = new Schema(
       type: String,
       required: false,
     },
-    companyEmail: {
-      type: String,
-      required: true,
-    },
   },
   { _id: false }
 );
 
 const jobSchema = new Schema(
   {
+    postedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User"
+    },
     title: {
+      type: String,
+      required: true,
+    },
+    desc: {
       type: String,
       required: true,
     },
@@ -41,16 +45,11 @@ const jobSchema = new Schema(
       required: true,
     },
     client: companySchema,
-    datePosted: {
-      type: String,
-      required: false,
-    },
     applicationEmail: {
       type: String,
       required: true,
     },
     tags: [],
-
     requirements: [],
     roles: [],
   },
