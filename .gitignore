@@ -2,4 +2,4 @@
 
 *.http
 
-*.env
+.env

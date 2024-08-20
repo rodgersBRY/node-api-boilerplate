@@ -31,15 +31,36 @@ exports.getJob = async (req, res, next) => {
 
 exports.newJob = async (req, res, next) => {
   try {
-    const { title, location, type, client, requirements, roles } = req.body;
+    const {
+      title,
+      location,
+      country,
+      type,
+      remote,
+      applicationEmail,
+      companyName,
+      website,
+      companyEmail,
+      requirements,
+      roles,
+    } = req.body;
 
     console.log(req.body);
+
+    const clientData = {
+      name: companyName,
+      website: website,
+      companyEmail: companyEmail,
+    };
 
     const jobData = {
       title: title,
       location: location,
       type: type,
-      client: client,
+      client: clientData,
+      applicationEmail: applicationEmail,
+      country: country,
+      remote: remote,
       datePosted: new Date(),
       requirements: requirements,
       roles: roles,
