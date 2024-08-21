@@ -1,14 +1,51 @@
 const { throwError } = require("../helpers");
 const {
+  allApplications,
+  applicationsByUserId,
+  applicationById,
   newApplication,
   userApplicationByJobId,
 } = require("../models/application");
 
-exports.getApplications = async (req, res, next) => {};
+exports.getApplications = async (req, res, next) => {
+  try {
+    const applications = await allApplications();
 
-exports.getUserApplications = async (req, res, next) => {};
+    if (!applications) throwError("Applications cannot be retrieved!", 404);
 
-exports.getApplication = async (req, res, next) => {};
+    res.status(200).json({ applications });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getUserApplications = async (req, res, next) => {
+  try {
+    const userId = req.params.userId || req.userId;
+
+    const applications = await applicationsByUserId(userId);
+
+    if (!applications) throwError("Applications cannot be retrieved!", 404);
+
+    res.status(200).json({ applications });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getApplication = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const application = await applicationById(id);
+
+    if (!application) throwError("Application cannot be retrieved!", 404);
+
+    res.status(200).json({ application });
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.newApplication = async (req, res, next) => {
   try {
@@ -45,5 +82,3 @@ exports.newApplication = async (req, res, next) => {
     next(err);
   }
 };
-
-exports.uploadCV = async (req, res, next) => {};
