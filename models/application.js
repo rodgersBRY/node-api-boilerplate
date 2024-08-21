@@ -53,6 +53,8 @@ module.exports = {
   allApplications: () => Application.find(),
   applicationsByUserId: (id) => Application.find({ userId: id }),
   applicationById: (id) => Application.findById(id),
+  userApplicationByJobId: (jobId, userId) =>
+    Application.findOne({ jobId: jobId, userId }),
   newApplication: (values) =>
     new Application(values).save().then((application) => application),
 };
