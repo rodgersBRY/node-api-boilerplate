@@ -2,6 +2,7 @@ const express = require("express"),
   logger = require("morgan"),
   cors = require("cors"),
   app = express(),
+  path = require("path"),
   connectDB = require("./services/db");
 
 require("dotenv").config();
@@ -9,19 +10,22 @@ require("dotenv").config();
 connectDB();
 
 const authRoutes = require("./routes/auth"),
-  jobRoutes = require("./routes/job");
+  jobRoutes = require("./routes/job"),
+  applicationRoutes = require("./routes/application");
+
+const port = process.env.PORT || 4000;
 
 app
   .use(logger("dev"))
   .use(cors())
   .use(express.urlencoded({ extended: false }))
-  .use(express.json());
-
-const port = process.env.PORT || 4000;
+  .use(express.json())
+  .use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const routes = [
   { path: "/api/v1/auth", handler: authRoutes },
   { path: "/api/v1/jobs", handler: jobRoutes },
+  { path: "/api/v1/applications", handler: applicationRoutes },
 ];
 
 routes.forEach((route) => app.use(route.path, route.handler));

@@ -69,3 +69,15 @@ exports.login = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.uploadCV = async (req, res, next) => {
+  const cvUrl = `/uploads/${req.file.filename}`;
+
+  try {
+    const updatedUser = await editUser(req.userId, { cvUrl: cvUrl });
+
+    res.status(201).json({ message: "CV uploaded successfully", updatedUser });
+  } catch (err) {
+    next(err);
+  }
+};

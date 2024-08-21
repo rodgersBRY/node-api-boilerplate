@@ -30,7 +30,7 @@ const userSchema = new Schema(
       enum: ["admin", "candidate"],
       default: "candidate",
     },
-    resumeUrl: {
+    cvUrl: {
       type: String,
       required: false,
     },
