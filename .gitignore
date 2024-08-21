@@ -2,6 +2,6 @@
 
 *.http
 
-.env
+*.env
 
 /uploads
