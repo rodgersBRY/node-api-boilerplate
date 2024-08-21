@@ -50,8 +50,6 @@ exports.newJob = async (req, res, next) => {
       roles,
     } = req.body;
 
-    console.log(req.body);
-
     if (
       title == "" ||
       country == "" ||
@@ -72,7 +70,7 @@ exports.newJob = async (req, res, next) => {
     const tagsList = tags.split(",").map(item => item.trim());
     const rolesList = roles.split(",").map(item => item.trim());
     const requirementsList = requirements.split(",").map(item => item.trim());
-
+    
     const jobData = {
       postedBy: req.userId,
       title: title,
