@@ -21,9 +21,7 @@ exports.getApplications = async (req, res, next) => {
 
 exports.getUserApplications = async (req, res, next) => {
   try {
-    const userId = req.params.userId || req.userId;
-
-    const applications = await applicationsByUserId(userId);
+    const applications = await applicationsByUserId(req.userId);
 
     if (!applications) throwError("Applications cannot be retrieved!", 404);
 
@@ -36,6 +34,8 @@ exports.getUserApplications = async (req, res, next) => {
 exports.getApplication = async (req, res, next) => {
   try {
     const id = req.params.id;
+    console.log(id);
+    
 
     const application = await applicationById(id);
 
@@ -73,6 +73,7 @@ exports.newApplication = async (req, res, next) => {
       country: country,
       pTitle: pTitle,
       skills: skills,
+      // urls: urls,
     };
 
     const result = await newApplication(applicationData);

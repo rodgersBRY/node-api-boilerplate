@@ -5,10 +5,10 @@ const app = require("express").Router(),
 
 app
   .route("/")
-  .get(controller.getApplications)
+  .get(isAuthenticated, controller.getApplications)
   .post(isAuthenticated, upload.single("cv"), controller.newApplication);
 
-app.route("/user/:userId").get(isAuthenticated, controller.getUserApplications);
+app.route("/user").get(isAuthenticated, controller.getUserApplications);
 app.route("/:id").get(isAuthenticated, controller.getApplication);
 
 module.exports = app;
