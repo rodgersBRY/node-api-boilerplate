@@ -4,7 +4,7 @@ module.exports = async (req, _, next) => {
   const authHeader = req.headers["authorization"];
 
   if (!authHeader) {
-    const error = new Error("No Headers!");
+    const error = new Error("NO AUTH HEADERS!");
     error.statusCode = 401;
     return next(error);
   }
@@ -20,14 +20,11 @@ module.exports = async (req, _, next) => {
   }
 
   if (!decodedToken) {
-    const error = new Error("Invalid Token!");
+    const error = new Error("UNVERIFIABLE TOKEN!");
     error.statusCode = 401;
     return next(error);
   }
 
-  req.userId = decodedToken.userId;
-
-  // console.log(req.userId);
-  
+  req.userId = decodedToken.userId;  
   next();
 };

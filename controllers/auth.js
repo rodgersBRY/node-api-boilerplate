@@ -2,24 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const { throwError } = require("../helpers");
-const {
-  getUsers,
-  addUser,
-  editUser,
-  getUserByEmail,
-} = require("../models/user");
-
-exports.allUsers = async (_, res, next) => {
-  try {
-    const users = await getUsers();
-
-    if (!users) throwError("Error fetching users", 404);
-
-    res.status(200).json({ users });
-  } catch (err) {
-    next(err);
-  }
-};
+const { addUser, editUser, getUserByEmail } = require("../models/user");
+const uploadFromBuffer = require("../services/buffer_stream");
 
 exports.register = async (req, res, next) => {
   const { name, email, password, role } = req.body;
@@ -104,11 +88,25 @@ exports.updatePassword = async (req, res, next) => {
   } catch (err) {}
 };
 
-exports.uploadCV = async (req, res, next) => {
-  const cvUrl = `/uploads/${req.file.filename}`;
-
+exports.updateCV = async (req, res, next) => {
   try {
-    const updatedUser = await editUser(req.userId, { cvUrl: cvUrl });
+    if (!req.file) throwError("Attach your CV", 401);
+
+    max_size = 10 * 1024 * 1024;
+
+    if (req.file.size > max_size) throwError("Your file exceeds 10MB");
+
+    const originalName = req.file.originalname.split(".")[0]; // Extract the original filename without extension
+    const timestamp = Date.now();
+
+    const file_data = {
+      name: originalName,
+      timestamp: timestamp,
+    };
+
+    const { secure_url } = await uploadFromBuffer(req.file.buffer, file_data);
+
+    const updatedUser = await editUser(req.userId, { cvUrl: secure_url });
 
     res.status(201).json({ message: "CV uploaded successfully", updatedUser });
   } catch (err) {

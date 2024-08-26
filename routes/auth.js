@@ -7,10 +7,8 @@ app.post("/register", controller.register);
 
 app.post("/login", controller.login);
 
-app.get("/users", controller.allUsers);
-
-app.post("/upload", isAuthenticated, upload.single("cv"), controller.uploadCV);
-
-app.post("edit-pass", controller.updatePassword);
+app
+  .route("/upload")
+  .post(isAuthenticated, upload.single("cv"), controller.updateCV);
 
 module.exports = app;
