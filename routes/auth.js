@@ -9,6 +9,6 @@ app.route("/login").post(controller.login);
 
 app
   .route("/upload")
-  .post(isAuthenticated, upload.single("cv"), controller.uploadCV);
+  .post(isAuthenticated, upload.single("cv"), controller.updateCV);
 
 module.exports = app;

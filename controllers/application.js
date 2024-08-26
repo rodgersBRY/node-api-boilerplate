@@ -6,6 +6,7 @@ const {
   newApplication,
   userApplicationByJobId,
 } = require("../models/application");
+const uploadFromBuffer = require("../services/buffer_stream");
 
 exports.getApplications = async (req, res, next) => {
   try {
@@ -35,7 +36,6 @@ exports.getApplication = async (req, res, next) => {
   try {
     const id = req.params.id;
     console.log(id);
-    
 
     const application = await applicationById(id);
 
@@ -56,19 +56,30 @@ exports.newApplication = async (req, res, next) => {
     if (applicationExists)
       throwError("You have already applied for this job", 409);
 
-    if (name == "" || country == "" || pTitle == "" || !req.file)
-      throwError(
-        "Some required fields are empty or your CV is not attached",
-        400
-      );
+    if (name == "" || country == "" || pTitle == "")
+      throwError("Some required fields are empty", 400);
 
-    const cvUrl = `/uploads/${req.file.filename}`;
+    if (!req.file) throwError("Attach your CV", 401);
+
+    max_size = 10 * 1024 * 1024;
+
+    if (req.file.size > max_size) throwError("Your file exceeds 10MB");
+
+    const originalName = req.file.originalname.split(".")[0]; // Extract the original filename without extension
+    const timestamp = Date.now();
+
+    const file_data = {
+      name: originalName,
+      timestamp: timestamp,
+    };
+
+    const { secure_url } = await uploadFromBuffer(req.file.buffer, file_data);
 
     const applicationData = {
       userId: req.userId,
       jobId: jobId,
       applicantName: name,
-      cvUrl: cvUrl,
+      cvUrl: secure_url,
       location: location,
       country: country,
       pTitle: pTitle,
