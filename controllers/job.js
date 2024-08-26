@@ -9,7 +9,21 @@ const { throwError } = require("../helpers");
 
 exports.getJobs = async (req, res, next) => {
   try {
-    const jobs = await getAllJobs();
+    const { location, country, category } = req.query;
+
+    let query = {};
+
+    if (location) {
+      query.location = location.toLowerCase();
+    }
+    if (category) {
+      query.category = category.toLowerCase();
+    }
+    if (country) {
+      query.country = country.toLowerCase();
+    }
+
+    const jobs = await getAllJobs(query);
 
     if (!jobs) throwError("Cannot retrieve any jobs!", 404);
 
@@ -41,7 +55,7 @@ exports.newJob = async (req, res, next) => {
       country,
       type,
       desc,
-      tags,
+      category,
       remote,
       applicationEmail,
       companyName,
@@ -56,33 +70,33 @@ exports.newJob = async (req, res, next) => {
       type == "" ||
       applicationEmail == "" ||
       companyName == "" ||
+      category == "" ||
       requirements == "" ||
       desc == ""
     )
       throwError("Required fields cannot be empty!", 404);
 
     const clientData = {
-      name: companyName,
-      website: website,
+      name: companyName.toLowerCase(),
+      website: website.toLowerCase(),
     };
 
     // separate the list values
-    const tagsList = tags.split(",").map(item => item.trim());
-    const rolesList = roles.split(",").map(item => item.trim());
-    const requirementsList = requirements.split(",").map(item => item.trim());
-    
+    const rolesList = roles.split(",").map((item) => item.trim());
+    const requirementsList = requirements.split(",").map((item) => item.trim());
+
     const jobData = {
       postedBy: req.userId,
-      title: title,
-      location: location,
+      title: title.toLowerCase(),
+      location: location.toLowerCase(),
       type: type,
       client: clientData,
-      applicationEmail: applicationEmail,
-      country: country,
+      applicationEmail: applicationEmail.toLowerCase(),
+      country: country.toLowerCase(),
       remote: remote,
       requirements: requirementsList,
       roles: rolesList,
-      tags: tagsList,
+      category: category.toLowerCase(),
       desc: desc,
     };
 

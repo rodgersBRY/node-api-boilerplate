@@ -2,7 +2,24 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const { throwError } = require("../helpers");
-const { addUser, editUser, getUserByEmail } = require("../models/user");
+const {
+  getUsers,
+  addUser,
+  editUser,
+  getUserByEmail,
+} = require("../models/user");
+
+exports.allUsers = async (_, res, next) => {
+  try {
+    const users = await getUsers();
+
+    if (!users) throwError("Error fetching users", 404);
+
+    res.status(200).json({ users });
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.register = async (req, res, next) => {
   const { name, email, password, role } = req.body;
@@ -21,17 +38,9 @@ exports.register = async (req, res, next) => {
       role: role || "candidate",
     };
 
-    const user = await addUser(userData);
+    await addUser(userData);
 
-    const token = jwt.sign(
-      {
-        email: user.email,
-        userId: user._id.toString(),
-      },
-      process.env.JWT_SECRET_TOKEN
-    );
-
-    res.status(201).json({ msg: "successfully registered!", user, token });
+    res.status(201).json({ msg: "successfully registered!" });
   } catch (err) {
     next(err);
   }
@@ -57,7 +66,8 @@ exports.login = async (req, res, next) => {
         email: loadedUser.email,
         userId: loadedUser._id.toString(),
       },
-      process.env.JWT_SECRET_TOKEN
+      process.env.JWT_SECRET_TOKEN,
+      { expiresIn: "1h" }
     );
 
     res.status(200).json({
@@ -68,6 +78,30 @@ exports.login = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+exports.updatePassword = async (req, res, next) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email) throwError("Please enter an email address", 401);
+
+    const userExists = await getUserByEmail(email);
+
+    if (!userExists)
+      throwError("No user with that email exists. Please register", 404);
+
+    // update password
+    const hashedPass = await bcrypt.hash(newPassword, 12);
+
+    userExists.password = hashedPass;
+
+    const updatedUser = await userExists.save();
+
+    res
+      .status(201)
+      .json({ message: "Password was updated successfully", updatedUser });
+  } catch (err) {}
 };
 
 exports.uploadCV = async (req, res, next) => {

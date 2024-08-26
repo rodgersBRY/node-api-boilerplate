@@ -33,6 +33,14 @@ const jobSchema = new Schema(
       type: String,
       required: false,
     },
+    category: {
+      type: String,
+      required: true,
+    },
+    salary: {
+      type: Number,
+      required: false,
+    },
     country: {
       type: String,
       required: true,
@@ -50,17 +58,21 @@ const jobSchema = new Schema(
       type: String,
       required: true,
     },
-    tags: [],
     requirements: [],
     roles: [],
   },
   { timestamps: true }
 );
 
+// Create indexes on frequently queried fields
+jobSchema.index({ location: 1 });
+jobSchema.index({ category: 1 });
+jobSchema.index({ country: 1 });
+
 const Job = model("Job", jobSchema);
 
 module.exports = {
-  getAllJobs: () => Job.find(),
+  getAllJobs: (query) => Job.find(query),
   getJobById: (id) => Job.findById(id),
   createJob: (values) => new Job(values).save().then((job) => job),
   deleteJobById: (id) => Job.findByIdAndDelete(id),
