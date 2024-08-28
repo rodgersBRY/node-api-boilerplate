@@ -7,7 +7,7 @@ const uploadFromBuffer = require("../services/buffer_stream");
 
 exports.register = async (req, res, next) => {
   const { name, email, password, role } = req.body;
-
+  
   try {
     const userExists = await getUserByEmail(email);
 

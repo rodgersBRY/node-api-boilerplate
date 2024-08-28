@@ -18,7 +18,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       required: true,
-      enum: ["admin", "candidate"],
+      enum: ["admin", "candidate", "employer"],
       default: "candidate",
     },
     cvUrl: {

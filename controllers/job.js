@@ -13,15 +13,9 @@ exports.getJobs = async (req, res, next) => {
 
     let query = {};
 
-    if (location) {
-      query.location = location.toLowerCase();
-    }
-    if (category) {
-      query.category = category.toLowerCase();
-    }
-    if (country) {
-      query.country = country.toLowerCase();
-    }
+    if (location) query.location = location.toLowerCase();
+    if (category) query.category = category.toLowerCase();
+    if (country) query.country = country.toLowerCase();
 
     const jobs = await getAllJobs(query);
 

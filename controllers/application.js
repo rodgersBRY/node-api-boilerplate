@@ -10,7 +10,14 @@ const uploadFromBuffer = require("../services/buffer_stream");
 
 exports.getApplications = async (req, res, next) => {
   try {
-    const applications = await allApplications();
+    const { user, job } = req.query;
+
+    let query = {};
+
+    if (user) query.user = user;
+    if (job) query.job = job;
+
+    const applications = await allApplications(query);
 
     if (!applications) throwError("Applications cannot be retrieved!", 404);
 
@@ -48,7 +55,7 @@ exports.getApplication = async (req, res, next) => {
 
 exports.newApplication = async (req, res, next) => {
   try {
-    const { name, jobId, location, country, pTitle, skills, urls } = req.body;
+    const { jobId, location, country, pTitle, skills, urls } = req.body;
 
     const applicationExists = await userApplicationByJobId(jobId, req.userId);
 
@@ -56,29 +63,31 @@ exports.newApplication = async (req, res, next) => {
       throwError("You have already applied for this job", 409);
 
     if (name == "" || country == "" || pTitle == "")
-      throwError("Some required fields are empty", 400);
+      throwError("Some required fields are empty", 401);
 
-    if (!req.file) throwError("Attach your CV", 401);
+    let cvUrl = "";
 
-    max_size = 10 * 1024 * 1024;
+    if (req.file) {
+      max_size = 10 * 1024 * 1024;
 
-    if (req.file.size > max_size) throwError("Your file exceeds 10MB");
+      if (req.file.size > max_size) throwError("Your file exceeds 10MB");
 
-    const originalName = req.file.originalname.split(".")[0]; // Extract the original filename without extension
-    const timestamp = Date.now();
+      const originalName = req.file.originalname.split(".")[0]; // Extract the original filename without extension
+      const timestamp = Date.now();
 
-    const file_data = {
-      name: originalName,
-      timestamp: timestamp,
-    };
+      const file_data = {
+        name: originalName,
+        timestamp: timestamp,
+      };
 
-    const { secure_url } = await uploadFromBuffer(req.file.buffer, file_data);
+      const { secure_url } = await uploadFromBuffer(req.file.buffer, file_data);
+      cvUrl = secure_url;
+    }
 
     const applicationData = {
       userId: req.userId,
       jobId: jobId,
-      applicantName: name,
-      cvUrl: secure_url,
+      cvUrl: cvUrl,
       location: location,
       country: country,
       pTitle: pTitle,
