@@ -9,12 +9,12 @@ const { throwError } = require("../helpers");
 
 exports.getJobs = async (req, res, next) => {
   try {
-    const { location, country, category } = req.query;
+    const { salary, country, position } = req.query;
 
     let query = {};
 
-    if (location) query.location = location.toLowerCase();
-    if (category) query.category = category.toLowerCase();
+    if (salary) query.location = salary.toLowerCase();
+    if (position) query.title = position.toLowerCase();
     if (country) query.country = country.toLowerCase();
 
     const jobs = await getAllJobs(query);

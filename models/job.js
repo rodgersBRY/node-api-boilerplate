@@ -65,8 +65,8 @@ const jobSchema = new Schema(
 );
 
 // Create indexes on frequently queried fields
-jobSchema.index({ location: 1 });
-jobSchema.index({ category: 1 });
+jobSchema.index({ title: 1 });
+jobSchema.index({ salary: 1 });
 jobSchema.index({ country: 1 });
 
 const Job = model("Job", jobSchema);
