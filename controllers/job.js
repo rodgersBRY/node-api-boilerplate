@@ -45,16 +45,11 @@ exports.newJob = async (req, res, next) => {
   try {
     const {
       title,
-      location,
       country,
       type,
       desc,
       salary,
-      category,
-      remote,
       applicationEmail,
-      companyName,
-      website,
       requirements,
       roles,
     } = req.body;
@@ -64,35 +59,21 @@ exports.newJob = async (req, res, next) => {
       country == "" ||
       type == "" ||
       applicationEmail == "" ||
-      companyName == "" ||
-      category == "" ||
-      requirements == "" ||
+      requirements.length <= 0 ||
+      roles.length <= 0 ||
       desc == ""
     )
       throwError("Required fields cannot be empty!", 404);
 
-    const clientData = {
-      name: companyName.toLowerCase(),
-      website: website.toLowerCase(),
-    };
-
-    // separate the list values
-    const rolesList = roles.split(",").map((item) => item.trim());
-    const requirementsList = requirements.split(",").map((item) => item.trim());
-
     const jobData = {
       postedBy: req.userId,
       title: title.toLowerCase(),
-      location: location.toLowerCase(),
       type: type,
-      client: clientData,
       salary: salary,
       applicationEmail: applicationEmail.toLowerCase(),
       country: country.toLowerCase(),
-      remote: remote,
-      requirements: requirementsList,
-      roles: rolesList,
-      category: category.toLowerCase(),
+      requirements: requirements,
+      roles: roles,
       desc: desc,
     };
 

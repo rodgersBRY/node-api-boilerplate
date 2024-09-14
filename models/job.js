@@ -1,19 +1,5 @@
 const { Schema, model } = require("mongoose");
 
-const companySchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    website: {
-      type: String,
-      required: false,
-    },
-  },
-  { _id: false }
-);
-
 const jobSchema = new Schema(
   {
     postedBy: {
@@ -29,16 +15,8 @@ const jobSchema = new Schema(
       type: String,
       required: true,
     },
-    location: {
-      type: String,
-      required: false,
-    },
-    category: {
-      type: String,
-      required: true,
-    },
     salary: {
-      type: Number,
+      type: String,
       required: false,
     },
     country: {
@@ -49,11 +27,6 @@ const jobSchema = new Schema(
       type: String,
       required: true,
     },
-    remote: {
-      type: Boolean,
-      required: true,
-    },
-    client: companySchema,
     applicationEmail: {
       type: String,
       required: true,
