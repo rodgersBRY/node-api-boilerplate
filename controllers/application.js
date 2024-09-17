@@ -62,7 +62,7 @@ exports.newApplication = async (req, res, next) => {
     if (applicationExists)
       throwError("You have already applied for this job", 409);
 
-    if (name == "" || country == "" || pTitle == "")
+    if (country == "" || pTitle == "")
       throwError("Some required fields are empty", 401);
 
     let cvUrl = "";
@@ -92,7 +92,6 @@ exports.newApplication = async (req, res, next) => {
       country: country,
       pTitle: pTitle,
       skills: skills,
-      // urls: urls,
     };
 
     const result = await newApplication(applicationData);
