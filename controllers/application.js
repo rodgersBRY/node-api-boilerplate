@@ -55,7 +55,7 @@ exports.getApplication = async (req, res, next) => {
 
 exports.newApplication = async (req, res, next) => {
   try {
-    const { jobId, location, country, pTitle, skills, urls } = req.body;
+    const { jobId, location, country, pTitle, skills } = req.body;
 
     const applicationExists = await userApplicationByJobId(jobId, req.userId);
 
