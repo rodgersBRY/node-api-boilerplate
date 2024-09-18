@@ -4,10 +4,11 @@ const jwt = require("jsonwebtoken");
 const { throwError } = require("../helpers");
 const { addUser, editUser, getUserByEmail } = require("../models/user");
 const uploadFromBuffer = require("../services/buffer_stream");
+const { googleSheetsService } = require("../services/google_sheets_service");
 
 exports.register = async (req, res, next) => {
-  const { name, email, password, role } = req.body;
-  
+  const { name, email, password, phone, role } = req.body;
+
   try {
     const userExists = await getUserByEmail(email);
 
@@ -18,11 +19,16 @@ exports.register = async (req, res, next) => {
     const userData = {
       name: name,
       email: email,
+      phone: phone,
       password: hashedPass,
       role: role || "candidate",
     };
 
     await addUser(userData);
+
+    // save user to google sheets
+    let spreadData = [[name, email, phone, role]];
+    await googleSheetsService(spreadData);
 
     res.status(201).json({ msg: "successfully registered!" });
   } catch (err) {
