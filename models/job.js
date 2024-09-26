@@ -27,10 +27,6 @@ const jobSchema = new Schema(
       type: String,
       required: true,
     },
-    applicationEmail: {
-      type: String,
-      required: true,
-    },
     requirements: [],
     roles: [],
   },
@@ -46,7 +42,7 @@ const Job = model("Job", jobSchema);
 
 module.exports = {
   getAllJobs: (query) => Job.find(query),
-  getJobById: (id) => Job.findById(id),
+  getJobById: (id) => Job.findById(id).populate("postedBy", "name email -_id"),
   createJob: (values) => new Job(values).save().then((job) => job),
   deleteJobById: (id) => Job.findByIdAndDelete(id),
 };

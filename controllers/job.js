@@ -70,7 +70,6 @@ exports.newJob = async (req, res, next) => {
       title: title.toLowerCase(),
       type: type,
       salary: salary,
-      applicationEmail: applicationEmail.toLowerCase(),
       country: country.toLowerCase(),
       requirements: requirements,
       roles: roles,
