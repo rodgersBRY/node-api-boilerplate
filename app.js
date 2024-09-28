@@ -11,7 +11,8 @@ connectDB();
 
 const authRoutes = require("./routes/auth"),
   jobRoutes = require("./routes/job"),
-  applicationRoutes = require("./routes/application");
+  applicationRoutes = require("./routes/application"),
+  feedbackRoutes = require("./routes/feedback");
 
 const port = process.env.PORT || 4000;
 
@@ -26,6 +27,7 @@ const routes = [
   { path: "/api/v1/auth", handler: authRoutes },
   { path: "/api/v1/jobs", handler: jobRoutes },
   { path: "/api/v1/applications", handler: applicationRoutes },
+  { path: "/api/v1/feedback", handler: feedbackRoutes },
 ];
 
 routes.forEach((route) => app.use(route.path, route.handler));

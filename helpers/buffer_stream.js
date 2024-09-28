@@ -1,4 +1,4 @@
-const cloudinary = require("./cloudinary");
+const cloudinary = require("../services/cloudinary");
 
 // Use a promise to handle the stream upload
 const uploadFromBuffer = async (buffer, { name, timestamp }) => {

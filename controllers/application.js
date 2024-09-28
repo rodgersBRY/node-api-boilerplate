@@ -6,7 +6,7 @@ const {
   newApplication,
   userApplicationByJobId,
 } = require("../models/application");
-const uploadFromBuffer = require("../services/buffer_stream");
+const uploadFromBuffer = require("../helpers/buffer_stream");
 
 exports.getApplications = async (req, res, next) => {
   try {

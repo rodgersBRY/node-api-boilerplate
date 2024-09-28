@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const { throwError } = require("../helpers");
 const { addUser, editUser, getUserByEmail } = require("../models/user");
-const uploadFromBuffer = require("../services/buffer_stream");
+const uploadFromBuffer = require("../helpers/buffer_stream");
 const { googleSheetsService } = require("../services/google_sheets_service");
 
 exports.register = async (req, res, next) => {
