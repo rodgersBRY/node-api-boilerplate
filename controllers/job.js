@@ -63,7 +63,7 @@ exports.newJob = async (req, res, next) => {
       roles.length <= 0 ||
       desc == ""
     )
-      throwError("Required fields cannot be empty!", 404);
+      throwError("Required fields cannot be empty!", 400);
 
     const jobData = {
       postedBy: req.userId,

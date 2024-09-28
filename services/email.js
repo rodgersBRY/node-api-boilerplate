@@ -10,7 +10,13 @@ emailjs.init({
   publicKey: publicKey,
 });
 
-const emailClient = async (data) =>
-  await emailjs.send(serviceId, templateId, data);
+const emailClient = async (data) => {
+  try {
+    const res = await emailjs.send(serviceId, templateId, data);
+    return res;
+  } catch (err) {
+    throw err;
+  }
+};
 
 module.exports = emailClient;

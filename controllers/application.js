@@ -63,7 +63,7 @@ exports.newApplication = async (req, res, next) => {
       throwError("You have already applied for this job", 409);
 
     if (country == "" || pTitle == "")
-      throwError("Fill in the required fields", 401);
+      throwError("Fill in the required fields", 400);
 
     let cvUrl = "";
 

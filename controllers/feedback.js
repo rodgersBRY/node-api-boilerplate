@@ -1,9 +1,19 @@
 const emailClient = require("../services/email");
+const { throwError } = require("../helpers");
 
 exports.feedback = async (req, res, next) => {
   const { name, email, phone, subject, message } = req.body;
 
   try {
+    if (
+      name == "" ||
+      email == "" ||
+      phone == "" ||
+      subject == "" ||
+      message == ""
+    )
+      throwError("All fields are required", 400);
+
     const emailBody = {
       name,
       email,
@@ -11,10 +21,10 @@ exports.feedback = async (req, res, next) => {
       subject,
       message,
     };
+    
+    await emailClient(emailBody);
 
-    const result = await emailClient(emailBody);
-
-    res.status(result.status).json({ message: result.text });
+    res.status(200).json({ msg: "sent" });
   } catch (err) {
     next(err);
   }
