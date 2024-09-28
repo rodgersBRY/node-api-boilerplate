@@ -14,9 +14,7 @@ exports.feedback = async (req, res, next) => {
 
     const result = await emailClient(emailBody);
 
-    res
-      .status(result.status)
-      .json({ text: result.text, message: "Feedback sent" });
+    res.status(result.status).json({ message: result.text });
   } catch (err) {
     next(err);
   }
