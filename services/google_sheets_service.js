@@ -1,6 +1,7 @@
 const { google } = require("googleapis");
 
-const keyFilePath = process.env.G_APP_CREDENTIALS;
+const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
+const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
 const sheetId = process.env.SHEET_ID;
 const tabName = process.env.TAB_NAME;
 const range = "A:D";
@@ -9,7 +10,10 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 
 const getAuthToken = async () => {
   const auth = new google.auth.GoogleAuth({
-    keyFile: keyFilePath,
+    credentials: {
+      client_email: clientEmail,
+      private_key: privateKey,
+    },
     scopes: SCOPES,
   });
 
