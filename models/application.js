@@ -25,15 +25,7 @@ const applicationSchema = new Schema(
       type: String,
       required: false,
     },
-    location: {
-      type: String,
-      required: false,
-    },
     country: {
-      type: String,
-      required: true,
-    },
-    pTitle: {
       type: String,
       required: true,
     },

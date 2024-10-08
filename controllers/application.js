@@ -1,3 +1,4 @@
+const emailClient = require("../services/email");
 const { throwError } = require("../helpers");
 const {
   allApplications,
@@ -7,6 +8,8 @@ const {
   userApplicationByJobId,
 } = require("../models/application");
 const uploadFromBuffer = require("../helpers/buffer_stream");
+const { getUserById } = require("../models/user");
+const { getJobById } = require("../models/job");
 
 exports.getApplications = async (req, res, next) => {
   try {
@@ -54,15 +57,18 @@ exports.getApplication = async (req, res, next) => {
 };
 
 exports.newApplication = async (req, res, next) => {
+  const serviceId = process.env.JOBS_SERVICE_ID;
+  const templateId = process.env.JOBS_TEMPLATE_ID;
+
   try {
-    const { jobId, location, country, pTitle, skills } = req.body;
+    const { jobId, country, skills } = req.body;
 
     const applicationExists = await userApplicationByJobId(jobId, req.userId);
 
     if (applicationExists)
       throwError("You have already applied for this job", 409);
 
-    if (country == "" || pTitle == "")
+    if (country == "")
       throwError("Fill in the required fields", 400);
 
     let cvUrl = "";
@@ -88,13 +94,26 @@ exports.newApplication = async (req, res, next) => {
       userId: req.userId,
       jobId: jobId,
       cvUrl: cvUrl,
-      location: location,
       country: country,
-      pTitle: pTitle,
       skills: skills,
     };
 
     const result = await newApplication(applicationData);
+
+    // get all email data
+    const { name, email, phone } = await getUserById(req.userId);
+    const { title } = await getJobById(jobId);
+
+    const emailData = {
+      name,
+      email,
+      phone,
+      job: title,
+      cvUrl,
+      country,
+    };
+
+    await emailClient(serviceId, templateId, emailData);
 
     res.status(201).json({ message: "application submitted!", result });
   } catch (err) {
