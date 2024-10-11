@@ -43,22 +43,15 @@ exports.getJob = async (req, res, next) => {
 
 exports.newJob = async (req, res, next) => {
   try {
-    const {
-      title,
-      country,
-      type,
-      desc,
-      salary,
-      applicationEmail,
-      requirements,
-      roles,
-    } = req.body;
+    const { title, country, type, desc, salary, requirements, roles } =
+      req.body;
+
+    console.log(title, country, type, requirements, roles, desc);
 
     if (
       title == "" ||
       country == "" ||
       type == "" ||
-      applicationEmail == "" ||
       requirements.length <= 0 ||
       roles.length <= 0 ||
       desc == ""
