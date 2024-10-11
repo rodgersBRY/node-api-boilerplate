@@ -3,6 +3,7 @@ const { throwError } = require("../helpers");
 
 exports.webFeedback = async (req, res, next) => {
   const { name, email, phone, subject, message } = req.body;
+
   const serviceId = process.env.FEEDBACK_SERVICE_ID;
   const templateId = process.env.FEEDBACK_TEMPLATE_ID;
 
@@ -34,6 +35,7 @@ exports.webFeedback = async (req, res, next) => {
 
 exports.bookingFeedback = async (req, res, next) => {
   const { name, email, phone, country, message } = req.body;
+
   const serviceId = process.env.BOOKINGS_SERVICE_ID;
   const templateId = process.env.APPLY_TEMPLATE_ID;
 
