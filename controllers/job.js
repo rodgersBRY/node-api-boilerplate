@@ -43,20 +43,31 @@ exports.getJob = async (req, res, next) => {
 
 exports.newJob = async (req, res, next) => {
   try {
-    const { title, country, type, desc, salary, requirements, roles } =
-      req.body;
+    const {
+      title,
+      country,
+      type,
+      desc,
+      salary,
+      requirements,
+      reqs,
+      role,
+      roles,
+    } = req.body;
 
-    console.log(title, country, type, requirements, roles, desc);
-
-    if (
-      title == "" ||
-      country == "" ||
-      type == "" ||
-      requirements.length <= 0 ||
-      roles.length <= 0 ||
-      desc == ""
-    )
+    if (title == "" || country == "" || type == "" || desc == "")
       throwError("Required fields cannot be empty!", 400);
+
+    let jobRoles;
+    let jobReqs;
+
+    if (requirements.length > 0 && roles.length > 0) {
+      jobRoles = roles;
+      jobReqs = requirements;
+    } else {
+      jobRoles = role.split(",").map((role) => role.trim());
+      jobReqs = reqs.split(",").map((req) => req.trim());
+    }
 
     const jobData = {
       postedBy: req.userId,
@@ -64,14 +75,14 @@ exports.newJob = async (req, res, next) => {
       type: type,
       salary: salary,
       country: country.toLowerCase(),
-      requirements: requirements,
-      roles: roles,
+      requirements: jobReqs,
+      roles: jobRoles,
       desc: desc,
     };
 
     const result = await createJob(jobData);
 
-    res.status(201).json({ result });
+    res.status(201).json({ message: "Job posted", result });
   } catch (err) {
     next(err);
   }
