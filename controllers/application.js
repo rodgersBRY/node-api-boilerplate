@@ -61,15 +61,18 @@ exports.newApplication = async (req, res, next) => {
   const templateId = process.env.JOBS_TEMPLATE_ID;
 
   try {
-    const { jobId, country, skills } = req.body;
+    const {
+      jobId,
+      country,
+      // skills
+    } = req.body;
 
     const applicationExists = await userApplicationByJobId(jobId, req.userId);
 
     if (applicationExists)
       throwError("You have already applied for this job", 409);
 
-    if (country == "")
-      throwError("Fill in the required fields", 400);
+    if (country == "") throwError("Fill in the required fields", 400);
 
     let cvUrl = "";
 
@@ -95,7 +98,6 @@ exports.newApplication = async (req, res, next) => {
       jobId: jobId,
       cvUrl: cvUrl,
       country: country,
-      skills: skills,
     };
 
     const result = await newApplication(applicationData);

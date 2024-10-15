@@ -29,7 +29,7 @@ const applicationSchema = new Schema(
       type: String,
       required: true,
     },
-    skills: [],
+    // skills: [],
     urls: urlSchema,
   },
   { timestamps: true }
