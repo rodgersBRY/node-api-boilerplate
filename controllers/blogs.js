@@ -5,7 +5,7 @@ const {
   deleteBlogById,
 } = require("../models/blog");
 
-const { throwError } = require("../helpers");
+const { throwError } = require("../helpers/error");
 
 exports.getBlogs = async (req, res, next) => {
   try {

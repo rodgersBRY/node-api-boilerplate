@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const { throwError } = require("../helpers");
+const { throwError } = require("../helpers/error");
 const { addUser, editUser, getUserByEmail } = require("../models/user");
 const uploadFromBuffer = require("../helpers/buffer_stream");
 const { googleSheetsService } = require("../services/google_sheets_service");

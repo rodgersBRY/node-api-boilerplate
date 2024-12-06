@@ -1,5 +1,5 @@
 const emailClient = require("../services/email");
-const { throwError } = require("../helpers");
+const { throwError } = require("../helpers/error");
 
 exports.webFeedback = async (req, res, next) => {
   const { name, email, phone, subject, message } = req.body;

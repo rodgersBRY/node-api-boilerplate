@@ -46,8 +46,11 @@ app.use((err, req, res, next) => {
   return res.status(status).json({ error: data, message: message });
 });
 
-app.listen(port, () => {
-  console.log(`Port ${port} is ready for requests`);
-});
+function serve() {
+  app.listen(port, () => {
+    console.log(`Port ${port} is ready for requests`);
+  });
+}
 
+serve();
 module.exports = app;

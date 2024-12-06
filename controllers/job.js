@@ -5,7 +5,7 @@ const {
   deleteJobById,
 } = require("../models/job");
 
-const { throwError } = require("../helpers");
+const { throwError } = require("../helpers/error");
 
 exports.getJobs = async (req, res, next) => {
   try {
