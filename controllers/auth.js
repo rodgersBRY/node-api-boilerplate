@@ -6,10 +6,9 @@ const {
   addUser,
   editUser,
   getUserByEmail,
-  getUserById,
 } = require("../models/user");
 const uploadFromBuffer = require("../helpers/buffer_stream");
-const { googleSheetsService } = require("../services/google_sheets_service");
+const { googleSheetsService } = require("../config/google_sheets_service");
 
 exports.register = async (req, res, next) => {
   const { name, email, password, phone, role } = req.body;

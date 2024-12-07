@@ -1,4 +1,4 @@
-const emailClient = require("../services/email");
+const emailClient = require("../config/email");
 const { throwError } = require("../helpers/error");
 const {
   allApplications,
