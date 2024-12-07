@@ -10,6 +10,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
     },
     phone: {
       type: String,
@@ -33,6 +34,9 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
+
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1 });
 
 const User = model("User", userSchema);
 
