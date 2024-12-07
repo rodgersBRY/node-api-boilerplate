@@ -24,13 +24,17 @@ exports.register = async (req, res, next) => {
       role: role || "candidate",
     };
 
-    await addUser(userData);
+    const user = await addUser(userData);
 
+    res.status(201).json({ user });
+  } catch (err) {
+    next(err);
+  }
+
+  try {
     // save user to google sheets
     let spreadData = [[name, email, phone, role]];
     await googleSheetsService(spreadData);
-
-    res.status(201).json({ msg: "successfully registered!" });
   } catch (err) {
     next(err);
   }

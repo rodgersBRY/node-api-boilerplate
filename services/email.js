@@ -1,11 +1,9 @@
 const emailjs = require("@emailjs/nodejs");
-
-const publicKey = process.env.EMAIL_PUBLIC_KEY;
-const privateKey = process.env.EMAIL_PRIVATE_KEY;
+const { EMAIL_PRIVATE_KEY, EMAIL_PUBLIC_KEY } = require("../config/env");
 
 emailjs.init({
-  privateKey: privateKey,
-  publicKey: publicKey,
+  privateKey: EMAIL_PRIVATE_KEY,
+  publicKey: EMAIL_PUBLIC_KEY,
 });
 
 const emailClient = async (serviceId, templateId, data) => {

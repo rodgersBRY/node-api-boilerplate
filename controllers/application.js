@@ -10,6 +10,7 @@ const {
 const uploadFromBuffer = require("../helpers/buffer_stream");
 const { getUserById } = require("../models/user");
 const { getJobById } = require("../models/job");
+const { JOBS_SERVICE_ID, JOBS_TEMPLATE_ID } = require("../config/env");
 
 exports.getApplications = async (req, res, next) => {
   try {
@@ -57,24 +58,17 @@ exports.getApplication = async (req, res, next) => {
 };
 
 exports.newApplication = async (req, res, next) => {
-  const serviceId = process.env.JOBS_SERVICE_ID;
-  const templateId = process.env.JOBS_TEMPLATE_ID;
+  const { jobId, country } = req.body;
+
+  let cvUrl = "";
 
   try {
-    const {
-      jobId,
-      country,
-      // skills
-    } = req.body;
-
     const applicationExists = await userApplicationByJobId(jobId, req.userId);
 
     if (applicationExists)
       throwError("You have already applied for this job", 409);
 
     if (country == "") throwError("Fill in the required fields", 400);
-
-    let cvUrl = "";
 
     if (req.file) {
       max_size = 10 * 1024 * 1024;
@@ -102,7 +96,12 @@ exports.newApplication = async (req, res, next) => {
 
     const result = await newApplication(applicationData);
 
-    // get all email data
+    res.status(201).json({ result });
+  } catch (err) {
+    next(err);
+  }
+
+  try {
     const { name, email, phone } = await getUserById(req.userId);
     const { title } = await getJobById(jobId);
 
@@ -115,9 +114,7 @@ exports.newApplication = async (req, res, next) => {
       country,
     };
 
-    await emailClient(serviceId, templateId, emailData);
-
-    res.status(201).json({ message: "application submitted!", result });
+    await emailClient(JOBS_SERVICE_ID, JOBS_TEMPLATE_ID, emailData);
   } catch (err) {
     next(err);
   }

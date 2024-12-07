@@ -11,6 +11,13 @@ const jobSchema = new Schema(
       type: String,
       required: true,
     },
+    deleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+    },
     desc: {
       type: String,
       required: true,
@@ -38,11 +45,23 @@ jobSchema.index({ title: 1 });
 jobSchema.index({ salary: 1 });
 jobSchema.index({ country: 1 });
 
+jobSchema.methods.softDelete = function () {
+  this.deleted = true;
+  this.deletedAt = new Date();
+  return this.save();
+};
+
 const Job = model("Job", jobSchema);
 
 module.exports = {
-  getAllJobs: (query) => Job.find(query),
-  getJobById: (id) => Job.findById(id).populate("postedBy", "name email -_id"),
+  getAllJobs: (query) => Job.find({ ...query, deleted: false }),
+  getJobById: (id) =>
+    Job.findById(id)
+      .where({ deleted: false })
+      .populate("postedBy", "name email -_id"),
   createJob: (values) => new Job(values).save().then((job) => job),
-  deleteJobById: (id) => Job.findByIdAndDelete(id),
+  deleteJobById: (id) =>
+    Job.findById(id).then((job) => {
+      if (job) return job.softDelete();
+    }),
 };

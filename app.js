@@ -1,21 +1,22 @@
-const express = require("express"),
-  logger = require("morgan"),
-  cors = require("cors"),
-  app = express(),
-  path = require("path"),
-  connectDB = require("./services/db");
-
 require("dotenv").config();
 
-connectDB();
+const express = require("express");
+const logger = require("morgan");
+const cors = require("cors");
+const path = require("path");
+const MongoDB = require("./services/db");
+const { PORT } = require("./config/env");
+const { createServer } = require("http");
 
-const authRoutes = require("./routes/auth"),
-  jobRoutes = require("./routes/job"),
-  applicationRoutes = require("./routes/application"),
-  feedbackRoutes = require("./routes/feedback"),
-  blogRoutes = require("./routes/blog");
+const app = express();
 
-const port = process.env.PORT || 4000;
+const mongoDB = new MongoDB();
+
+const authRoutes = require("./routes/auth");
+const jobRoutes = require("./routes/job");
+const applicationRoutes = require("./routes/application");
+const feedbackRoutes = require("./routes/feedback");
+const blogRoutes = require("./routes/blog");
 
 app
   .use(logger("dev"))
@@ -34,11 +35,11 @@ const routes = [
 
 routes.forEach((route) => app.use(route.path, route.handler));
 
-app.use("/", (req, res) => {
+app.use("/", (_, res) => {
   res.send("This is the Halisi Travels Official API");
 });
 
-app.use((err, req, res, next) => {
+app.use((err, _, res, __) => {
   const message = err.message,
     status = err.statusCode || 500,
     data = err.data;
@@ -46,11 +47,16 @@ app.use((err, req, res, next) => {
   return res.status(status).json({ error: data, message: message });
 });
 
-function serve() {
-  app.listen(port, () => {
-    console.log(`Port ${port} is ready for requests`);
+const server = createServer(app);
+
+async function serve() {
+  await mongoDB.init();
+
+  server.listen(PORT, () => {
+    console.log(`server-init port: ${PORT}`);
   });
 }
 
 serve();
+
 module.exports = app;
