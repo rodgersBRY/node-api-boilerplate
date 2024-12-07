@@ -2,7 +2,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const { throwError } = require("../helpers/error");
-const { addUser, editUser, getUserByEmail } = require("../models/user");
+const {
+  addUser,
+  editUser,
+  getUserByEmail,
+  getUserById,
+} = require("../models/user");
 const uploadFromBuffer = require("../helpers/buffer_stream");
 const { googleSheetsService } = require("../services/google_sheets_service");
 
@@ -74,28 +79,25 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.updatePassword = async (req, res, next) => {
+exports.updateUser = async (req, res, next) => {
   try {
-    const { email, newPassword } = req.body;
+    let userData = req.body;
 
-    if (!email) throwError("Please enter an email address", 401);
+    if (!req.body) return;
 
-    const userExists = await getUserByEmail(email);
+    if (userData.password) {
+      // update password
+      const hashedPass = await bcrypt.hash(newPassword, 12);
 
-    if (!userExists)
-      throwError("No user with that email exists. Please register", 404);
+      userData.password = hashedPass;
+    }
 
-    // update password
-    const hashedPass = await bcrypt.hash(newPassword, 12);
+    const updatedUser = await editUser(req.userId, userData);
 
-    userExists.password = hashedPass;
-
-    const updatedUser = await userExists.save();
-
-    res
-      .status(201)
-      .json({ message: "Password was updated successfully", updatedUser });
-  } catch (err) {}
+    res.status(201).json({ updatedUser });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.updateCV = async (req, res, next) => {
