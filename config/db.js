@@ -1,13 +1,16 @@
 const mongoose = require("mongoose");
 const { MONGO_URI } = require("./env");
+const logger = require("../utils/logger");
 
 class MongoDB {
   async init() {
     try {
-      await mongoose.connect(MONGO_URI);
-      console.log("Connected to mongoDB");
+      const { connection } = await mongoose.connect(MONGO_URI);
+      const { host, port, name } = connection;
+
+      logger.info(`db-init url: mongodb://${host}:${port}/${name}`);
     } catch (err) {
-      console.error("could not connect to mongoDB");
+      logger.error("db-init error: %o", err);
       process.exit(1);
     }
   }

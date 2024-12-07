@@ -12,6 +12,48 @@ const range = "A:D";
 
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 
+class GoogleSheetsService {
+  async getAuthToken() {
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: GOOGLE_CLIENT_EMAIL,
+        private_key: PRIVATE_KEY,
+      },
+      scopes: SCOPES,
+    });
+
+    const authToken = await auth.getClient();
+
+    return google.sheets({
+      version: "v4",
+      auth: authToken,
+    });
+  }
+
+  async writeSheet(googleSheetClient, SHEET_ID, TAB_NAME, data) {
+    return await googleSheetClient.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: `${TAB_NAME}!${range}`,
+      valueInputOption: "USER_ENTERED",
+      insertDataOption: "INSERT_ROWS",
+      resource: {
+        majorDimension: "ROWS",
+        values: data,
+      },
+    });
+  }
+
+  async googleSheetsService(dataToBeInserted) {
+    try {
+      const auth = await this.getAuthToken();
+
+      await this.writeSheet(auth, SHEET_ID, TAB_NAME, dataToBeInserted);
+    } catch (err) {
+      throw err;
+    }
+  }
+}
+
 const getAuthToken = async () => {
   const auth = new google.auth.GoogleAuth({
     credentials: {

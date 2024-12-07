@@ -1,35 +1,17 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
-const { throwError } = require("../helpers/error");
-const {
-  addUser,
-  editUser,
-  getUserByEmail,
-} = require("../models/user");
-const uploadFromBuffer = require("../helpers/buffer_stream");
-const { googleSheetsService } = require("../config/google_sheets_service");
+const AuthService = require("../services/auth");
+const authService = new AuthService();
 
 exports.register = async (req, res, next) => {
   const { name, email, password, phone, role } = req.body;
 
   try {
-    const userExists = await getUserByEmail(email);
-
-    if (userExists) throwError("An account with that email exists!", 409);
-
-    const hashedPass = await bcrypt.hash(password, 12);
-
-    const userData = {
-      name: name,
-      email: email,
-      phone: phone,
-      password: hashedPass,
-      role: role || "candidate",
-    };
-
-    const user = await addUser(userData);
-
+    const user = await authService.register({
+      name,
+      email,
+      password,
+      phone,
+      role,
+    });
     res.status(201).json({ user });
   } catch (err) {
     next(err);
@@ -47,32 +29,12 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
-  let loadedUser;
-
   try {
-    const user = await getUserByEmail(email);
-
-    if (!user) throwError("That user does not exist!", 404);
-
-    loadedUser = user;
-
-    const passwordMatch = await bcrypt.compare(password, loadedUser.password);
-    if (!passwordMatch) throwError("Wrong password!", 401);
-
-    const token = jwt.sign(
-      {
-        email: loadedUser.email,
-        userId: loadedUser._id.toString(),
-      },
-      process.env.JWT_SECRET_TOKEN,
-      { expiresIn: "1h" }
+    const { userId, loadedUser, token } = await authService.login(
+      email,
+      password
     );
-
-    res.status(200).json({
-      userId: loadedUser._id.toString(),
-      loadedUser,
-      token,
-    });
+    res.status(200).json({ userId, loadedUser, token });
   } catch (err) {
     next(err);
   }
@@ -80,19 +42,7 @@ exports.login = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   try {
-    let userData = req.body;
-
-    if (!req.body) return;
-
-    if (userData.password) {
-      // update password
-      const hashedPass = await bcrypt.hash(newPassword, 12);
-
-      userData.password = hashedPass;
-    }
-
-    const updatedUser = await editUser(req.userId, userData);
-
+    const updatedUser = await authService.update(req.userId, req.body);
     res.status(201).json({ updatedUser });
   } catch (err) {
     next(err);

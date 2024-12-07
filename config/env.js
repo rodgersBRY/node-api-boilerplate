@@ -23,6 +23,8 @@ const GOOGLE_PRIVATE_KEY = process.env["GOOGLE_PRIVATE_KEY"];
 const SHEET_ID = process.env["SHEET_ID"];
 const TAB_NAME = process.env["TAB_NAME"];
 
+const LOG_MODE = process.env["LOG_MODE"];
+
 module.exports = {
   MONGO_URI,
   PORT,
@@ -43,4 +45,5 @@ module.exports = {
   GOOGLE_PRIVATE_KEY,
   SHEET_ID,
   TAB_NAME,
+  LOG_MODE,
 };

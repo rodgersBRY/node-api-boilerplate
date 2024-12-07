@@ -5,6 +5,7 @@ const MongoDB = require("./config/db");
 const { PORT } = require("./config/env");
 const { createServer } = require("http");
 const ExpressConfig = require("./config/express");
+const logger = require("./utils/logger");
 
 const app = express();
 
@@ -19,7 +20,7 @@ async function serve() {
   expressConfig.init(app);
 
   server.listen(PORT, () => {
-    console.log(`server-init port: ${PORT}`);
+    logger.info("server-init port: %o", parseInt(PORT));
   });
 }
 
