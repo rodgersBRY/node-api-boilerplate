@@ -43,8 +43,7 @@ const User = model("User", userSchema);
 module.exports = {
   getUsers: () => User.find(),
   getUserById: (id) => User.findById(id),
-  getUserByEmail: (email) => User.findOne({ email: email }),
-  addUser: (values) => new User(values).save().then((user) => user),
-  editUser: (id, values) =>
-    User.findByIdAndUpdate(id, values, { upsert: true, new: true }),
+  getUser: (query) => User.findOne(query),
+  addUser: (query, values) =>
+    User.findOneAndUpdate(query, values, { upsert: true, new: true }),
 };

@@ -24,6 +24,9 @@ const SHEET_ID = process.env["SHEET_ID"];
 const TAB_NAME = process.env["TAB_NAME"];
 
 const LOG_MODE = process.env["LOG_MODE"];
+const CREATE_ADMIN = process.env["CREATE_ADMIN"];
+const ADMIN_EMAIL = process.env["ADMIN_EMAIL"];
+const ADMIN_PASS = process.env["ADMIN_PASS"];
 
 module.exports = {
   MONGO_URI,
@@ -44,6 +47,9 @@ module.exports = {
   GOOGLE_CLIENT_EMAIL,
   GOOGLE_PRIVATE_KEY,
   SHEET_ID,
+  CREATE_ADMIN,
+  ADMIN_EMAIL,
+  ADMIN_PASS,
   TAB_NAME,
   LOG_MODE,
 };
