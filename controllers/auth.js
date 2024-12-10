@@ -50,7 +50,7 @@ exports.login = async (req, res, next) => {
     if (!passwordMatch) throwError("Wrong password!", 401);
 
     const token = jwt.sign(
-      { email: user.email, userId: user.toString() },
+      { email: user.email, userId: user._id.toString() },
       JWT_SECRET_TOKEN,
       { expiresIn: "1h" }
     );

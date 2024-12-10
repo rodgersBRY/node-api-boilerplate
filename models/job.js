@@ -18,6 +18,7 @@ const jobSchema = new Schema(
     },
     deletedAt: {
       type: Date,
+      required: false,
     },
     desc: {
       type: String,
@@ -72,7 +73,7 @@ module.exports = {
     Job.findById(id)
       .where({ deleted: false })
       .populate("postedBy", "name email -_id"),
-  getJob: (query) => Job.findOne(query),
+  getJob: (query) => Job.findOne(query).populate("postedBy", "name email -_id"),
   createJob: (values) => new Job(values).save().then((job) => job),
   deleteJobById: (id) =>
     Job.findById(id).then((job) => {

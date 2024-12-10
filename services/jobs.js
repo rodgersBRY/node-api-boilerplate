@@ -38,7 +38,7 @@ class JobsService {
     }
 
     const jobData = {
-      userId,
+      postedBy: userId,
       title,
       type,
       salary,
@@ -60,6 +60,7 @@ class JobsService {
       throw err;
     }
   }
+    
 
   async get(query) {
     try {

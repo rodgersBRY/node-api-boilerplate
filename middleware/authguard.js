@@ -25,6 +25,6 @@ module.exports = async (req, _, next) => {
     return next(error);
   }
 
-  req.userId = decodedToken.userId;  
+  req.userId = decodedToken.userId;
   next();
 };
