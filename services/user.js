@@ -31,6 +31,8 @@ class AuthService {
 
     if (!users) throwError("Error fetching users", 404);
 
+    logger.info("fetched-users %o", users.length);
+
     return users;
   }
 

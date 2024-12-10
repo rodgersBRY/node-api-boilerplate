@@ -10,6 +10,7 @@ const jobSchema = new Schema(
     title: {
       type: String,
       required: true,
+      lowercase: true,
     },
     deleted: {
       type: Boolean,
@@ -23,12 +24,18 @@ const jobSchema = new Schema(
       required: true,
     },
     salary: {
-      type: String,
+      type: Number,
       required: false,
+    },
+    currency: {
+      type: String,
+      required: true,
+      lowercase: true,
     },
     country: {
       type: String,
       required: true,
+      lowercase: true,
     },
     type: {
       type: String,
@@ -40,7 +47,7 @@ const jobSchema = new Schema(
   { timestamps: true }
 );
 
-// Create indexes on frequently queried fields
+// Create indexes
 jobSchema.index({ title: 1 });
 jobSchema.index({ salary: 1 });
 jobSchema.index({ country: 1 });
@@ -48,6 +55,12 @@ jobSchema.index({ country: 1 });
 jobSchema.methods.softDelete = function () {
   this.deleted = true;
   this.deletedAt = new Date();
+  return this.save();
+};
+
+jobSchema.methods.restore = function () {
+  this.deleted = false;
+  this.deletedAt = null;
   return this.save();
 };
 
@@ -59,9 +72,14 @@ module.exports = {
     Job.findById(id)
       .where({ deleted: false })
       .populate("postedBy", "name email -_id"),
+  getJob: (query) => Job.findOne(query),
   createJob: (values) => new Job(values).save().then((job) => job),
   deleteJobById: (id) =>
     Job.findById(id).then((job) => {
       if (job) return job.softDelete();
+    }),
+  restoreJob: (id) =>
+    Job.findById(id).then((job) => {
+      if (job) return job.restore();
     }),
 };

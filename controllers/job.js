@@ -7,6 +7,9 @@ const {
 
 const { throwError } = require("../helpers/error");
 
+const JobsService = require("../services/jobs");
+const jobsService = new JobsService();
+
 exports.getJobs = async (req, res, next) => {
   try {
     const { salary, country, position } = req.query;
@@ -17,8 +20,7 @@ exports.getJobs = async (req, res, next) => {
     if (position) query.title = position.toLowerCase();
     if (country) query.country = country.toLowerCase();
 
-    const jobs = await getAllJobs(query);
-
+    const jobs = await jobsService.get(query);
     if (!jobs) throwError("Cannot retrieve any jobs!", 404);
 
     res.status(200).json({ jobs });
@@ -31,9 +33,8 @@ exports.getJob = async (req, res, next) => {
   try {
     const jobId = req.params.id;
 
-    const job = await getJobById(jobId);
-
-    if (!job) throwError("Cannot retrieve job details!", 404);
+    const job = await jobsService.getOne({ _id: jobId });
+    if (!job) throwError("Cannot retrieve job", 404);
 
     res.status(200).json(job);
   } catch (err) {
@@ -43,46 +44,22 @@ exports.getJob = async (req, res, next) => {
 
 exports.newJob = async (req, res, next) => {
   try {
-    const {
-      title,
-      country,
-      type,
-      desc,
-      salary,
-      requirements,
-      reqs,
-      role,
-      roles,
-    } = req.body;
+    const { title, country, type, salary, currency, desc } = req.body;
 
-    if (title == "" || country == "" || type == "" || desc == "")
+    if (
+      title == "" ||
+      country == "" ||
+      type == "" ||
+      desc == "" ||
+      salary == "" ||
+      currency == ""
+    )
       throwError("Required fields cannot be empty!", 400);
 
-    let jobRoles;
-    let jobReqs;
+    const job = await jobsService.create(req.body, req.userId);
+    if (!job) throwError("job not found", 404);
 
-    if (requirements.length > 0 && roles.length > 0) {
-      jobRoles = roles;
-      jobReqs = requirements;
-    } else {
-      jobRoles = role.split(",").map((role) => role.trim());
-      jobReqs = reqs.split(",").map((req) => req.trim());
-    }
-
-    const jobData = {
-      postedBy: req.userId,
-      title: title.toLowerCase(),
-      type: type,
-      salary: salary,
-      country: country.toLowerCase(),
-      requirements: jobReqs,
-      roles: jobRoles,
-      desc: desc,
-    };
-
-    const result = await createJob(jobData);
-
-    res.status(201).json({ message: "Job posted", result });
+    res.status(201).json({ job });
   } catch (err) {
     next(err);
   }
@@ -92,9 +69,21 @@ exports.deleteJob = async (req, res, next) => {
   try {
     const jobId = req.params.id;
 
-    const deletedJob = await deleteJobById(jobId);
+    const deletedJob = await jobsService.delete(jobId);
 
-    res.status(200).json({ message: "The job has been deleted", deletedJob });
+    res.status(200).json({ deletedJob });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.restoreJob = async (req, res, next) => {
+  try {
+    const jobId = req.params.id;
+
+    const restoredJob = await jobsService.restore(jobId);
+
+    res.status(200).json({ restoredJob });
   } catch (err) {
     next(err);
   }
