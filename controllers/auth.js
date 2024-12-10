@@ -5,7 +5,6 @@ const { JWT_SECRET_TOKEN } = require("../config/env");
 
 const AuthService = require("../services/user");
 const GoogleSheetsService = require("../services/google_sheets");
-const logger = require("../utils/logger");
 const authService = new AuthService();
 
 exports.getUsers = async (req, res, next) => {
@@ -47,7 +46,6 @@ exports.login = async (req, res, next) => {
     const user = await authService.findOne({ email });
     if (!user) throwError("account not found", 404);
 
-
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) throwError("Wrong password!", 401);
 
@@ -78,19 +76,7 @@ exports.updateCV = async (req, res, next) => {
   try {
     if (!req.file) throwError("Attach your CV", 401);
 
-    max_size = 10 * 1024 * 1024;
-
-    if (req.file.size > max_size) throwError("Your file exceeds 10MB");
-
-    const originalName = req.file.originalname.split(".")[0]; // Extract the original filename without extension
-    const timestamp = Date.now();
-
-    const file_data = {
-      name: originalName,
-      timestamp: timestamp,
-    };
-
-    const { secure_url } = await uploadFromBuffer(req.file.buffer, file_data);
+    const { secure_url } = await uploadFromBuffer(req.file);
 
     const updatedUser = await editUser(req.userId, { cvUrl: secure_url });
 
