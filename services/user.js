@@ -42,7 +42,8 @@ class AuthService {
 
       return user;
     } catch (err) {
-      logger.info("get-user-error %o", err);
+      logger.error("get-user-error %o", err);
+      throw err;
     }
   }
 

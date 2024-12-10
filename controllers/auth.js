@@ -5,6 +5,7 @@ const { JWT_SECRET_TOKEN } = require("../config/env");
 
 const AuthService = require("../services/user");
 const GoogleSheetsService = require("../services/google_sheets");
+const logger = require("../utils/logger");
 const authService = new AuthService();
 
 exports.getUsers = async (req, res, next) => {
@@ -44,6 +45,8 @@ exports.login = async (req, res, next) => {
 
   try {
     const user = await authService.findOne({ email });
+    if (!user) throwError("account not found", 404);
+
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) throwError("Wrong password!", 401);
