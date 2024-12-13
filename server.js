@@ -17,7 +17,11 @@ const systemService = new SystemService();
 const server = createServer(app);
 
 async function serve() {
-  await mongoDB.init();
+  try {
+    await mongoDB.init();
+  } catch (err) {
+    logger.error("mongo-err", err);
+  }
 
   expressConfig.init(app);
 
