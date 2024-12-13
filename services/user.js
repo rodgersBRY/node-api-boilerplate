@@ -23,12 +23,12 @@ class AuthService {
       return user;
     } catch (err) {
       logger.error("new-user-error %o", err);
+      throw err;
     }
   }
 
   async get() {
     const users = await getUsers();
-
     if (!users) throwError("Error fetching users", 404);
 
     logger.info("fetched-users %o", users.length);
@@ -39,6 +39,7 @@ class AuthService {
   async findOne(query) {
     try {
       const user = await getUser(query);
+      if (!user) throwError("account not found, check again", 404);
 
       logger.info("user-info %o", user._id);
 
@@ -63,6 +64,7 @@ class AuthService {
       return updatedUser;
     } catch (err) {
       logger.info("update-user-error %o", err);
+      throw err;
     }
   }
 }

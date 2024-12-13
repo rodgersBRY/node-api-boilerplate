@@ -15,7 +15,9 @@ class ExpressConfig {
     app
       .use(helmet())
       .use(logger("dev"))
-      .use(cors())
+      .use(
+        cors({ origin: ["https://halisitravels.com", "http://localhost:8080"] })
+      )
       .use(express.urlencoded({ extended: true }))
       .use(express.json())
       .use(responseLogger)
@@ -30,10 +32,6 @@ class ExpressConfig {
     ];
 
     routes.forEach((route) => app.use(route.path, route.handler));
-
-    app.use("/", (_, res) => {
-      res.send("This is the Halisi Travels Official API");
-    });
 
     app.use((err, _, res, __) => {
       const message = err.message,
