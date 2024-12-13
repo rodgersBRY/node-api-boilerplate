@@ -60,7 +60,6 @@ class JobsService {
       throw err;
     }
   }
-    
 
   async get(query) {
     try {
