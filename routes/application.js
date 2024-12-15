@@ -1,7 +1,7 @@
-const app = require("express").Router(),
-  upload = require("../config/multer"),
-  controller = require("../controllers/application"),
-  isAuthenticated = require("../middleware/authguard");
+const app = require("express").Router();
+const upload = require("../config/multer");
+const controller = require("../controllers/application");
+const isAuthenticated = require("../middleware/authguard");
 
 app
   .route("/")
