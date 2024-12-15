@@ -32,11 +32,11 @@ exports.register = async (req, res, next) => {
       role,
     });
 
-    // const googleSheetsService = new GoogleSheetsService();
+    const googleSheetsService = new GoogleSheetsService();
 
-    // let spreadData = [[name, email, phone, role]];
+    let spreadData = [[name, email, phone, role]];
 
-    // await googleSheetsService.newEntry(spreadData);
+    await googleSheetsService.newEntry(spreadData);
 
     res.status(201).json({ user });
   } catch (err) {
