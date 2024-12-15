@@ -13,10 +13,12 @@ class AuthService {
         email,
         phone,
         password: hashedPass,
-        role: role || "candidate",
+        role: role,
       };
 
-      const user = await addUser({ email }, userData);
+      const { _id } = await addUser({ email }, userData);
+
+      const user = await this.findOne({ _id: _id });
 
       logger.info("user-created %o", user._id);
 
@@ -39,9 +41,6 @@ class AuthService {
   async findOne(query) {
     try {
       const user = await getUser(query);
-      if (!user) throwError("account not found, check again", 404);
-
-      logger.info("user-info %o", user._id);
 
       return user;
     } catch (err) {

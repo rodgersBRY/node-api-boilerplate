@@ -5,6 +5,7 @@ const { JWT_SECRET_TOKEN } = require("../config/env");
 
 const AuthService = require("../services/user");
 const GoogleSheetsService = require("../services/google_sheets");
+const logger = require("../utils/logger");
 const authService = new AuthService();
 
 exports.getUsers = async (req, res, next) => {
@@ -17,7 +18,11 @@ exports.register = async (req, res, next) => {
   const { name, email, password, phone, role } = req.body;
 
   try {
-    if (!req.body) throwError("all fields are required", 401);
+    if (!name || !email || !password || !phone)
+      throwError("all fields are required", 401);
+
+    const userExists = await authService.findOne({ email });
+    if (userExists) throwError("account exists", 409);
 
     const user = await authService.create({
       name,
@@ -27,11 +32,11 @@ exports.register = async (req, res, next) => {
       role,
     });
 
-    const googleSheetsService = new GoogleSheetsService();
+    // const googleSheetsService = new GoogleSheetsService();
 
-    let spreadData = [[name, email, phone, role]];
+    // let spreadData = [[name, email, phone, role]];
 
-    await googleSheetsService.newEntry(spreadData);
+    // await googleSheetsService.newEntry(spreadData);
 
     res.status(201).json({ user });
   } catch (err) {

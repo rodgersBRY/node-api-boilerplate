@@ -11,17 +11,14 @@ const logger = require("./utils/logger");
 const app = express();
 
 const mongoDB = new MongoDB();
+
 const expressConfig = new ExpressConfig();
 const systemService = new SystemService();
 
 const server = createServer(app);
 
 async function serve() {
-  try {
-    await mongoDB.init();
-  } catch (err) {
-    logger.error("mongo-err", err);
-  }
+  await mongoDB.init();
 
   expressConfig.init(app);
 
