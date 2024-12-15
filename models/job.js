@@ -68,7 +68,8 @@ jobSchema.methods.restore = function () {
 const Job = model("Job", jobSchema);
 
 module.exports = {
-  getAllJobs: (query) => Job.find({ ...query, deleted: false }),
+  getAllJobs: (query) =>
+    Job.find({ ...query, deleted: false }).sort({ createdAt: 1 }),
   getJobById: (id) =>
     Job.findById(id)
       .where({ deleted: false })
