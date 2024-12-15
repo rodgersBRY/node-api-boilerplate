@@ -1,16 +1,14 @@
 const EmailClient = require("../config/email");
 const { throwError } = require("../helpers/error");
-const {
-  allApplications,
-  applicationsByUserId,
-  applicationById,
-  newApplication,
-  userApplicationByJobId,
-} = require("../models/application");
-const uploadFromBuffer = require("../helpers/buffer_stream");
-const { getUserById } = require("../models/user");
-const { getJobById } = require("../models/job");
+const ApplicationsService = require("../services/application");
+const UserService = require("../services/user");
+const JobsService = require("../services/jobs");
+const uploadCV = require("../helpers/buffer_stream");
 const { JOBS_SERVICE_ID, JOBS_TEMPLATE_ID } = require("../config/env");
+
+const appService = new ApplicationsService();
+const userService = new UserService();
+const jobsService = new JobsService();
 
 const emailClient = new EmailClient();
 
@@ -23,8 +21,7 @@ exports.getApplications = async (req, res, next) => {
     if (user) query.user = user;
     if (job) query.job = job;
 
-    const applications = await allApplications(query);
-
+    const applications = await appService.get(query);
     if (!applications) throwError("Applications cannot be retrieved!", 404);
 
     res.status(200).json({ applications });
@@ -35,7 +32,7 @@ exports.getApplications = async (req, res, next) => {
 
 exports.getUserApplications = async (req, res, next) => {
   try {
-    const applications = await applicationsByUserId(req.userId);
+    const applications = await appService.get({ user: req.userId });
 
     if (!applications) throwError("Applications cannot be retrieved!", 404);
 
@@ -49,7 +46,7 @@ exports.getApplication = async (req, res, next) => {
   try {
     const id = req.params.id;
 
-    const application = await applicationById(id);
+    const application = await appService.findOne({ _id: id });
 
     if (!application) throwError("Application cannot be retrieved!", 404);
 
@@ -65,47 +62,43 @@ exports.newApplication = async (req, res, next) => {
   let cvUrl = "";
 
   try {
-    const applicationExists = await userApplicationByJobId(jobId, req.userId);
+    if (!country) throwError("'Country' field is required", 400);
 
-    if (applicationExists)
-      throwError("You have already applied for this job", 409);
-
-    if (country == "") throwError("Fill in the required fields", 400);
+    const appExists = await appService.findOne({
+      user: req.userId,
+      job: jobId,
+    });
+    if (appExists)
+      throwError("you've already applied, Kindly wait for feedback", 409);
 
     if (req.file) {
       max_size = 10 * 1024 * 1024;
 
       if (req.file.size > max_size) throwError("Your file exceeds 10MB");
 
-      const originalName = req.file.originalname.split(".")[0]; // Extract the original filename without extension
-      const timestamp = Date.now();
-
-      const file_data = {
-        name: originalName,
-        timestamp: timestamp,
-      };
-
-      const { secure_url } = await uploadFromBuffer(req.file.buffer, file_data);
+      const { secure_url } = await uploadCV(req.file);
       cvUrl = secure_url;
     }
 
     const applicationData = {
-      userId: req.userId,
-      jobId: jobId,
+      user: req.userId,
+      job: jobId,
       cvUrl: cvUrl,
       country: country,
     };
 
-    const result = await newApplication(applicationData);
+    const application = await appService.create(applicationData);
 
-    res.status(201).json({ result });
+    res.status(201).json({ application });
   } catch (err) {
     next(err);
   }
 
   try {
-    const { name, email, phone } = await getUserById(req.userId);
-    const { title } = await getJobById(jobId);
+    const { name, email, phone } = await userService.findOne({
+      _id: req.userId,
+    });
+    const { title } = await jobsService.getOne({ _id: jobId });
 
     const emailData = {
       name,
