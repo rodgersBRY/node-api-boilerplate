@@ -4,7 +4,7 @@ const responseLogger = (req, res, next) => {
   const originalJson = res.json;
 
   res.json = function (data) {
-    logger.debug("response: %o", data);
+    logger.debug("%o", data);
 
     return originalJson.call(this, data);
   };

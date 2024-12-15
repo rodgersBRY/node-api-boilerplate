@@ -79,7 +79,7 @@ class JobsService {
       const job = await getJob(query);
       if (!job) return;
 
-      logger.info("fetched-job: %o", job);
+      logger.info("fetched-job: %o", job._id);
 
       return job;
     } catch (err) {

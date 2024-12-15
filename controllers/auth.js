@@ -21,8 +21,8 @@ exports.register = async (req, res, next) => {
     if (!name || !email || !password || !phone)
       throwError("all fields are required", 401);
 
-    const userExists = await authService.findOne({ email });
-    if (userExists) throwError("account exists", 409);
+    if (password.length < 7)
+      throwError("Password should be more than 7 characters long", 400);
 
     const user = await authService.create({
       name,

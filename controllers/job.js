@@ -1,10 +1,3 @@
-const {
-  createJob,
-  getJobById,
-  getAllJobs,
-  deleteJobById,
-} = require("../models/job");
-
 const { throwError } = require("../helpers/error");
 
 const JobsService = require("../services/jobs");
@@ -21,7 +14,7 @@ exports.getJobs = async (req, res, next) => {
     if (country) query.country = country.toLowerCase();
 
     const jobs = await jobsService.get(query);
-    if (!jobs) throwError("Cannot retrieve any jobs!", 404);
+    if (!jobs) throwError("jobs not found", 404);
 
     res.status(200).json({ jobs });
   } catch (err) {
@@ -34,7 +27,7 @@ exports.getJob = async (req, res, next) => {
     const jobId = req.params.id;
 
     const job = await jobsService.getOne({ _id: jobId });
-    if (!job) throwError("Cannot retrieve job", 404);
+    if (!job) throwError("job not found", 404);
 
     res.status(200).json(job);
   } catch (err) {
@@ -46,18 +39,11 @@ exports.newJob = async (req, res, next) => {
   try {
     const { title, country, type, salary, currency, desc } = req.body;
 
-    if (
-      title == "" ||
-      country == "" ||
-      type == "" ||
-      desc == "" ||
-      salary == "" ||
-      currency == ""
-    )
-      throwError("Required fields cannot be empty!", 400);
+    if (!title || !country || !type || !desc || !salary || !currency)
+      throwError("More information is required about the job", 400);
 
     const job = await jobsService.create(req.body, req.userId);
-    if (!job) throwError("job not found", 404);
+    if (!job) throwError("error creating job", 404);
 
     res.status(201).json({ job });
   } catch (err) {
