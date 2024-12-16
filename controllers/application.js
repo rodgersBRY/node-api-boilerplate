@@ -4,7 +4,12 @@ const ApplicationsService = require("../services/application");
 const UserService = require("../services/user");
 const JobsService = require("../services/jobs");
 const { uploadFile } = require("../helpers/buffer_stream");
-const { JOBS_SERVICE_ID, JOBS_TEMPLATE_ID } = require("../config/env");
+const {
+  JOBS_SERVICE_ID,
+  JOBS_TEMPLATE_ID,
+  CLOUDINARY_CV_FOLDER,
+  CLOUDINARY_CV_RESOURCE_TYPE,
+} = require("../config/env");
 
 const appService = new ApplicationsService();
 const userService = new UserService();
@@ -76,7 +81,12 @@ exports.newApplication = async (req, res, next) => {
 
       if (req.file.size > max_size) throwError("Your file exceeds 10MB");
 
-      const { secure_url } = await uploadFile(req.file, "cv", "raw");
+      const { secure_url } = await uploadFile(
+        req.file,
+        CLOUDINARY_CV_FOLDER,
+        CLOUDINARY_CV_RESOURCE_TYPE
+      );
+      
       cvUrl = secure_url;
     }
 

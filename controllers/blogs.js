@@ -1,5 +1,9 @@
 const BlogPostsService = require("../services/blog");
 const { uploadFile } = require("../helpers/buffer_stream");
+const {
+  CLOUDINARY_BLOG_FOLDER,
+  CLOUDINARY_BLOG_RESOUCE_TYPE,
+} = require("../config/env");
 const { throwError } = require("../helpers/error");
 const logger = require("../utils/logger");
 
@@ -49,7 +53,11 @@ exports.newBlog = async (req, res, next) => {
 
       if (req.file.size > max_size) throwError("Your file exceeds 10MB");
 
-      const { secure_url } = await uploadFile(req.file, "blogs", "image");
+      const { secure_url } = await uploadFile(
+        req.file,
+        CLOUDINARY_BLOG_FOLDER,
+        CLOUDINARY_BLOG_RESOUCE_TYPE
+      );
       imagePath = secure_url;
     }
 
