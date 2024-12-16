@@ -1,17 +1,17 @@
 const cloudinary = require("../config/cloudinary");
 
 // Use a promise to handle the stream upload
-const uploadCV = async (file) => {
+const uploadFile = async (file, folder, resourceType) => {
   const timestamp = Date.now();
   const filename = file.originalname.split(".")[0];
 
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder: "cv",
-        resource_type: "raw",
+        folder: folder,
+        resource_type: resourceType,
         public_id: `${filename}-${timestamp}`,
-      }, // Use "raw" for non-image files like PDFs
+      }, // Use "raw" for non-image files like PDFs and "image" for image files
       (error, result) => {
         if (result) {
           resolve(result);
@@ -25,4 +25,4 @@ const uploadCV = async (file) => {
   });
 };
 
-module.exports = uploadCV;
+module.exports = { uploadFile };
