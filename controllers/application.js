@@ -1,4 +1,4 @@
-const EmailClient = require("../config/email");
+const emailService = require("../services/email");
 const { throwError } = require("../helpers/error");
 const ApplicationsService = require("../services/application");
 const UserService = require("../services/user");
@@ -15,7 +15,6 @@ const appService = new ApplicationsService();
 const userService = new UserService();
 const jobsService = new JobsService();
 
-const emailClient = new EmailClient();
 
 exports.getApplications = async (req, res, next) => {
   try {
@@ -119,7 +118,7 @@ exports.newApplication = async (req, res, next) => {
       country,
     };
 
-    await emailClient.sendEmail(JOBS_SERVICE_ID, JOBS_TEMPLATE_ID, emailData);
+    await emailService.sendEmail(JOBS_SERVICE_ID, JOBS_TEMPLATE_ID, emailData);
   } catch (err) {
     next(err);
   }

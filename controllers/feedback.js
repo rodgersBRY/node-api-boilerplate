@@ -1,4 +1,4 @@
-const emailClient = require("../config/email");
+const emailService = require("../services/email");
 const { throwError } = require("../helpers/error");
 
 exports.webFeedback = async (req, res, next) => {
@@ -8,13 +8,7 @@ exports.webFeedback = async (req, res, next) => {
   const templateId = process.env.FEEDBACK_TEMPLATE_ID;
 
   try {
-    if (
-      name == "" ||
-      email == "" ||
-      phone == "" ||
-      subject == "" ||
-      message == ""
-    )
+    if (!name || !email || !phone || !subject || !message)
       throwError("All fields are required", 400);
 
     const emailBody = {
@@ -25,7 +19,7 @@ exports.webFeedback = async (req, res, next) => {
       message,
     };
 
-    await emailClient(serviceId, templateId, emailBody);
+    await emailService.sendEmail(serviceId, templateId, emailBody);
 
     res.status(200).json({ msg: "sent" });
   } catch (err) {
@@ -40,13 +34,7 @@ exports.bookingFeedback = async (req, res, next) => {
   const templateId = process.env.APPLY_TEMPLATE_ID;
 
   try {
-    if (
-      name == "" ||
-      email == "" ||
-      phone == "" ||
-      country == "" ||
-      message == ""
-    )
+    if (!name || !email || !phone || !country || !message)
       throwError("All fields are required", 400);
 
     const emailBody = {
@@ -57,7 +45,7 @@ exports.bookingFeedback = async (req, res, next) => {
       message,
     };
 
-    await emailClient(serviceId, templateId, emailBody);
+    await emailService.sendEmail(serviceId, templateId, emailBody);
 
     res.status(200).json({ msg: "sent" });
   } catch (err) {
