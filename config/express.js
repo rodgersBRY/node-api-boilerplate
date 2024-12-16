@@ -15,7 +15,11 @@ class ExpressConfig {
     app
       .use(helmet())
       .use(logger("dev"))
-      .use(cors({ origin: true }))
+      .use(
+        cors({
+          origin: ["http://localhost:8080", "https://halisitravels.com"],
+        })
+      )
       .use(express.urlencoded({ extended: true }))
       .use(express.json())
       .use(responseLogger)
