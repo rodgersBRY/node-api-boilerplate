@@ -69,7 +69,7 @@ User Handlers:
 	•	Includes examples for fetching and creating users.
 
 ### Folder Structure
-```bash
+
 node-api-boilerplate
   ├── config        # Configuration files
   | ├── db.js        # Database configuration
