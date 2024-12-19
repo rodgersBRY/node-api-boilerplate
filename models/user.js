@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 
+// edit the schema as needed
 const userSchema = new Schema(
   {
     name: {
@@ -34,6 +35,7 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
+// edit the indexes as needed
 userSchema.index({ email: 1 });
 userSchema.index({ role: 1 });
 

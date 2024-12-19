@@ -4,11 +4,10 @@ const { throwError } = require("../helpers/error");
 const { JWT_SECRET_TOKEN } = require("../config/env");
 
 const AuthService = require("../services/user");
-const GoogleSheetsService = require("../services/google_sheets");
-const logger = require("../utils/logger");
+
 const authService = new AuthService();
 
-exports.getUsers = async (req, res, next) => {
+exports.getUsers = async (_, res, __) => {
   const users = await authService.get();
 
   res.status(200).json({ users });
@@ -31,12 +30,6 @@ exports.register = async (req, res, next) => {
       phone,
       role,
     });
-
-    const googleSheetsService = new GoogleSheetsService();
-
-    let spreadData = [[name, email, phone, role]];
-
-    await googleSheetsService.newEntry(spreadData);
 
     res.status(201).json({ user });
   } catch (err) {
@@ -72,20 +65,6 @@ exports.updateUser = async (req, res, next) => {
   try {
     const updatedUser = await authService.update({ email }, req.body);
     res.status(201).json({ updatedUser });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.updateCV = async (req, res, next) => {
-  try {
-    if (!req.file) throwError("Attach your CV", 401);
-
-    const { secure_url } = await uploadFromBuffer(req.file);
-
-    const updatedUser = await editUser(req.userId, { cvUrl: secure_url });
-
-    res.status(201).json({ message: "CV uploaded successfully", updatedUser });
   } catch (err) {
     next(err);
   }

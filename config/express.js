@@ -1,12 +1,6 @@
-const userRoutes = require("../routes/users");
-const jobRoutes = require("../routes/job");
-const applicationRoutes = require("../routes/application");
-const feedbackRoutes = require("../routes/feedback");
-const blogRoutes = require("../routes/blog");
 const helmet = require("helmet");
 const logger = require("morgan");
 const cors = require("cors");
-const path = require("path");
 const express = require("express");
 const responseLogger = require("../utils/response");
 
@@ -17,24 +11,20 @@ class ExpressConfig {
       .use(logger("dev"))
       .use(
         cors({
-          origin: ["http://localhost:8080", "https://halisitravels.com"],
+          origin: [""], //specify the origins to allow access to API
         })
       )
       .use(express.urlencoded({ extended: true }))
       .use(express.json())
-      .use(responseLogger)
-      .use("/uploads", express.static(path.join(__dirname, "uploads")));
+      .use(responseLogger);
 
     const routes = [
-      { path: "/api/v1/users", handler: userRoutes },
-      { path: "/api/v1/jobs", handler: jobRoutes },
-      { path: "/api/v1/applications", handler: applicationRoutes },
-      { path: "/api/v1/feedback", handler: feedbackRoutes },
-      { path: "/api/v1/blogs", handler: blogRoutes },
+      // add your route resources
     ];
 
     routes.forEach((route) => app.use(route.path, route.handler));
 
+    // error middleware
     app.use((err, _, res, __) => {
       const message = err.message,
         status = err.statusCode || 500,
