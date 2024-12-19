@@ -35,22 +35,60 @@ Ensure you have the following installed on your machine:
 
 ### Installation
 
-1. **Clone the Repository**:
+- **Clone the Repository**:
    ```bash
    git clone <repository-url>
    cd node-api-boilerplate
    npm install
 
 ### Configuration
-2.	**Create a .env File**:
+- **Create a .env File**:
 In the project root directory, create a .env file:
     ```bash
     touch .env
 
-•	In the project root directory, create a .env file:
+•	In the terminal, copy the contents of env.copy to .env:
+    ```bash
+    cp .env.copy .env
 
-3.	**Access the API**:
-The server will start at http://localhost:3000.
+### Access API
+- **Access the API**:
+The server will start at http://localhost:4000.
+
 Example endpoints:
-	•	GET /api/users - Fetch all users.
-	•	POST /api/users - Create a new user.
+
+	•	POST /api/v1/users/login - login a user.
+	•	POST /api/users/register - Create a new user.
+    •	GET /api/users/users - Get users registered.
+
+### Highlights
+
+User Handlers:
+
+	•	Predefined routes, controllers, and models for user operations.
+	•	Includes examples for fetching and creating users.
+
+### Folder Structure
+
+node-api-boilerplate
+  ├── config        # Configuration files
+  | ├── db.js        # Database configuration
+  | ├── env.js        # environment variables
+  | ├── express.js        # Express App configuration
+  | └── multer.js        # File upload with multer
+  ├── controllers   # API logic
+  | └── auth.js        # Authentication controller
+  ├── middleware        # Mongoose models
+  | └── authguard.js        # authguard middleware for routes
+  ├── models        # Mongoose models
+  | └── user.js        # User Monogoose Model
+  ├── routes        # API routes
+  | └── user.js        # User routes
+  ├── middleware    # Middleware functions (e.g., Auth middleware)
+  ├── .env.copy         # Example environment file
+  ├── package.json      # Project metadata
+  └── server.js         # Entry point of the application
+
+### Contributing
+
+Feel free to submit pull requests or raise issues to enhance the functionality of this boilerplate.
