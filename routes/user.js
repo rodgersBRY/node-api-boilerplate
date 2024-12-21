@@ -1,6 +1,6 @@
 const app = require("express").Router();
 
-const controller = require("../controllers/auth");
+const controller = require("../controllers/user");
 
 /*
 remove comments if you require multer for file upload 
@@ -17,6 +17,5 @@ app
 app.route("/register").post(controller.register);
 app.route("/login").post(controller.login);
 
-app.route("/upload").post(isAuthenticated, controller.updateCV);
 
 module.exports = app;
